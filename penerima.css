@@ -1,0 +1,620 @@
+/* Import Editorial Typography (Fraunces + Inter) */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Palette Organik & Bumi */
+  --primary: #2D5D3F;            /* Forest Olive Green */
+  --primary-dark: #1E432C;       /* Dark Olive */
+  --primary-light: #EAF2EC;      /* Soft Olive Tint */
+  --primary-border: #B8D3C0;
+  --bg-body: #FAF6EE;            /* Warm Off-White / Cream */
+  --bg-card: #FFFFFF;
+  --text-main: #232B25;
+  --text-muted: #68776C;
+  --border-color: #E8E2D5;
+  
+  /* Urgensi Color System */
+  --urgency-high: #C84B31;       /* Warm Terracotta */
+  --urgency-medium: #D9822B;     /* Warm Amber Ochre */
+  --urgency-low: #4D8B62;        /* Forest Sage */
+
+  --radius: 14px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, .brand {
+  font-family: 'Fraunces', serif;
+}
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Navigasi Utama */
+.navbar {
+  background-color: #FAF6EE;
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.5px;
+}
+
+.icon-brand {
+  stroke: var(--primary);
+  flex-shrink: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-link {
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background-color: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link:hover {
+  color: var(--primary-dark);
+  background-color: rgba(45, 93, 63, 0.06);
+}
+
+.nav-link.active {
+  color: #FFFFFF;
+  background-color: var(--primary);
+}
+
+/* Tombol Hamburger Menu Mobile */
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: 1.5px solid var(--border-color);
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: var(--primary-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-toggle:hover {
+  background-color: var(--primary-light);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 14px 20px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+  }
+
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+    gap: 8px;
+  }
+
+  .nav-links.open {
+    display: flex;
+    animation: fadeInDownNav 0.25s ease forwards;
+  }
+
+  .nav-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 10px 16px;
+    border-radius: 10px;
+  }
+}
+
+@keyframes fadeInDownNav {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Layout Container */
+.container {
+  max-width: 1080px;
+  margin: 32px auto;
+  padding: 0 24px;
+}
+
+/* Hero Section & Line Art Illustration */
+.hero-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background-color: #F3ECE0;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px 32px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 768px) {
+  .hero-wrapper {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+}
+
+.hero-text h1 {
+  font-size: 2.1rem;
+  color: var(--primary-dark);
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+.hero-text p {
+  color: var(--text-muted);
+  font-size: 0.96rem;
+  max-width: 540px;
+}
+
+.hero-illustration {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-illustration svg {
+  max-width: 200px;
+  height: auto;
+}
+
+/* Controls / Filter Bar */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--bg-card);
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 24px;
+}
+
+.filter-bar label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-bar select {
+  padding: 8px 14px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  background-color: #FAF8F5;
+  color: var(--text-main);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.filter-bar select:focus {
+  border-color: var(--primary);
+}
+
+@media (max-width: 600px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 14px 16px;
+  }
+
+  .filter-bar select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* Grid Cards Makanan Tersedia */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 22px;
+}
+
+.card-item {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 22px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* HIERARCHICAL SHADOWS BERDASARKAN URGENSI */
+.card-item:has(.urgency-5),
+.card-item:has(.urgency-4) {
+  border-left: 5px solid var(--urgency-high);
+  box-shadow: 0 10px 28px -4px rgba(200, 75, 49, 0.15), 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.card-item:has(.urgency-3) {
+  border-left: 5px solid var(--urgency-medium);
+  box-shadow: 0 8px 22px -4px rgba(217, 130, 43, 0.13), 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.card-item:has(.urgency-2),
+.card-item:has(.urgency-1) {
+  border-left: 5px solid var(--urgency-low);
+  box-shadow: 0 4px 14px -2px rgba(45, 93, 63, 0.08);
+}
+
+.card-item:hover {
+  transform: translateY(-4px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.restaurant-name {
+  font-size: 0.82rem;
+  color: var(--primary-dark);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.food-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+  font-family: 'Fraunces', serif;
+}
+
+.urgency-badge {
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  color: white;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.urgency-5, .urgency-4 {
+  background-color: var(--urgency-high);
+}
+
+.urgency-3 {
+  background-color: var(--urgency-medium);
+}
+
+.urgency-2, .urgency-1 {
+  background-color: var(--urgency-low);
+}
+
+/* Tombol Bagikan ke WhatsApp */
+.btn-wa-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #25D366;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.25);
+  margin-left: 6px;
+}
+
+.btn-wa-share:hover {
+  background-color: #1DA851;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
+}
+
+.card-info {
+  margin-bottom: 18px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.info-row span {
+  font-weight: 600;
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.note-box {
+  background-color: var(--primary-light);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--primary-dark);
+  margin-top: 10px;
+  border-left: 3px solid var(--primary);
+}
+
+.btn-claim {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(45, 93, 63, 0.18);
+}
+
+.btn-claim:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(45, 93, 63, 0.25);
+}
+
+/* Modal Popup Klaim */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(35, 43, 37, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: white;
+  width: 90%;
+  max-width: 440px;
+  padding: 28px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 16px 36px rgba(35, 43, 37, 0.2);
+}
+
+.modal-title {
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  color: var(--primary-dark);
+}
+
+.modal-food-info {
+  background: var(--primary-light);
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  font-size: 0.92rem;
+  color: var(--primary-dark);
+}
+
+/* Styling Form Input di dalam Modal Klaim (Width 100% & Jarak Rapi) */
+#claimForm .form-group {
+  margin-bottom: 16px;
+}
+
+#claimForm label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+#claimForm input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  outline: none;
+  background-color: #FAF8F5;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+#claimForm input:focus {
+  border-color: var(--primary);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(45, 93, 63, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 12px;
+  background-color: #E8E2D5;
+  color: var(--text-main);
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #DDD5C5;
+}
+
+.btn-confirm {
+  flex: 1;
+  padding: 12px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-confirm:hover {
+  background-color: var(--primary-dark);
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 24px;
+  background: white;
+  border-radius: var(--radius);
+  border: 1px dashed var(--border-color);
+  color: var(--text-muted);
+}
+
+.empty-state h3 {
+  font-size: 1.3rem;
+  color: var(--primary-dark);
+  margin-bottom: 8px;
+}
+
+/* Floating Toast Notification */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 380px;
+  width: calc(100% - 48px);
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 12px 30px rgba(35, 43, 37, 0.16);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-main);
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-error {
+  border-left: 5px solid var(--urgency-high);
+  background-color: #FDF2F0;
+  color: #8C2914;
+}
+
+.toast-success {
+  border-left: 5px solid var(--primary);
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+}
