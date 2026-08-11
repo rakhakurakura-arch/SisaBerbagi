@@ -1,72 +1,159 @@
-const CHATBOT_SYSTEM_INSTRUCTION = `Kamu adalah asisten chatbot resmi untuk platform SisaBerbagi, yaitu platform yang menghubungkan restoran/toko yang memiliki makanan sisa layak konsumsi dengan panti asuhan/komunitas yang membutuhkan, menggunakan AI untuk menilai urgensi penyaluran. Kamu HANYA boleh menjawab pertanyaan seputar topik berikut: (1) cara kerja platform SisaBerbagi dan cara menggunakannya baik sebagai restoran maupun penerima, (2) edukasi tentang food waste/limbah makanan di Indonesia dan dampaknya, (3) tips penyimpanan atau pengolahan makanan sisa agar tetap layak konsumsi, (4) informasi kontak SisaBerbagi (email: sisaberbagi@gmail.com, WhatsApp: +62 815-5338-3100). JIKA pertanyaan user berada di luar topik-topik ini (misalnya pertanyaan umum, hiburan, topik sensitif, atau hal yang tidak berkaitan dengan platform ini), TOLAK dengan sopan dan arahkan kembali user untuk bertanya seputar SisaBerbagi. Jawab selalu dalam Bahasa Indonesia yang ramah dan singkat (maksimal 3-4 kalimat).`;
+/* ==============================================================================
+ * KONFIGURASI CHATBOT AI SISABERBAGI
+ * ==============================================================================
+ */
 
-export async function onRequestPost(context) {
-  try {
-    const apiKey = context.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "GEMINI_API_KEY environment variable is not configured." }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" }
+// Inisialisasi elemen DOM setelah halaman selesai dimuat
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleBtn = document.getElementById("chatbotToggleBtn");
+  const closeBtn = document.getElementById("chatbotCloseBtn");
+  const panel = document.getElementById("chatbotPanel");
+  const messagesContainer = document.getElementById("chatbotMessages");
+  const form = document.getElementById("chatbotForm");
+  const input = document.getElementById("chatbotInput");
+  const sendBtn = document.getElementById("chatbotSendBtn");
+
+  // Array untuk menyimpan riwayat percakapan (digunakan untuk konteks multi-turn, max 6 pesan)
+  const chatHistory = [];
+  let isWelcomeShown = false;
+
+  // 1. Function Toggle Buka / Tutup Panel Chatbot
+  function toggleChatbot() {
+    const isActive = panel.classList.toggle("active");
+    toggleBtn.classList.toggle("active");
+    panel.setAttribute("aria-hidden", !isActive);
+
+    // Tampilkan pesan sambutan jika pertama kali dibuka
+    if (isActive && !isWelcomeShown) {
+      showWelcomeMessage();
+      isWelcomeShown = true;
+    }
+
+    if (isActive) {
+      input.focus();
+    }
+  }
+
+  if (toggleBtn) toggleBtn.addEventListener("click", toggleChatbot);
+  if (closeBtn) closeBtn.addEventListener("click", toggleChatbot);
+
+  // 2. Tampilkan Pesan Sambutan Otomatis saat Pertama Dibuka
+  function showWelcomeMessage() {
+    const welcomeText = "Halo! Saya asisten SisaBerbagi. Saya bisa membantu jawab pertanyaan seputar cara menyumbang makanan, cara mengklaim makanan, cara kerja platform ini, atau edukasi tentang food waste. Ada yang bisa saya bantu?";
+    appendMessage(welcomeText, "bot");
+  }
+
+  // 3. Tambahkan Pesan ke Tampilan UI Chat
+  function appendMessage(text, sender) {
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("chat-msg", sender === "user" ? "chat-msg-user" : "chat-msg-bot");
+    msgDiv.textContent = text;
+    messagesContainer.appendChild(msgDiv);
+    scrollToBottom();
+  }
+
+  // 4. Indikator "Mengetik..." (Typing Indicator)
+  function showTypingIndicator() {
+    const typingDiv = document.createElement("div");
+    typingDiv.classList.add("chat-typing");
+    typingDiv.id = "typingIndicator";
+    typingDiv.innerHTML = `
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+    `;
+    messagesContainer.appendChild(typingDiv);
+    scrollToBottom();
+  }
+
+  function hideTypingIndicator() {
+    const typingDiv = document.getElementById("typingIndicator");
+    if (typingDiv) {
+      typingDiv.remove();
+    }
+  }
+
+  // 5. Scroll Otomatis ke Pesan Terbawah
+  function scrollToBottom() {
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  // 6. Handling Submit Form / Kirim Pesan
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      // Tampilkan pesan user di UI
+      appendMessage(userText, "user");
+      input.value = "";
+      input.disabled = true;
+      sendBtn.disabled = true;
+
+      // Simpan ke riwayat lokal untuk multi-turn context
+      chatHistory.push({
+        role: "user",
+        parts: [{ text: userText }]
       });
-    }
 
-    const body = await context.request.json();
-    const history = body.chatHistory || body.history || [];
-    const userText = body.userText || body.message;
+      // Tampilkan animasi mengetik
+      showTypingIndicator();
 
-    let contents = history;
-    if (!contents || contents.length === 0) {
-      if (!userText) {
-        return new Response(JSON.stringify({ error: "No message or chat history provided." }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" }
+      try {
+        // Panggil Gemini API via serverless proxy
+        const botReply = await callGeminiAPI();
+        hideTypingIndicator();
+        
+        // Tampilkan balasan bot di UI
+        appendMessage(botReply, "bot");
+
+        // Simpan respon model ke riwayat lokal
+        chatHistory.push({
+          role: "model",
+          parts: [{ text: botReply }]
         });
+
+      } catch (error) {
+        console.error("Gagal mendapatkan respon dari Chatbot Gemini:", error);
+        hideTypingIndicator();
+
+        const errorMessage = "Maaf, terjadi kendala saat menghubungi asisten AI. Silakan coba beberapa saat lagi.";
+
+        appendMessage(errorMessage, "bot");
+      } finally {
+        input.disabled = false;
+        sendBtn.disabled = false;
+        input.focus();
       }
-      contents = [{ role: "user", parts: [{ text: userText }] }];
-    } else {
-      contents = contents.slice(-6);
-    }
+    });
+  }
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+  // 7. Fungsi Memanggil Gemini API via Endpoint Serverless Cloudflare
+  async function callGeminiAPI() {
+    // Ambil maksimal 6 pesan terakhir untuk konteks percakapan multi-turn
+    const recentHistory = chatHistory.slice(-6);
 
-    const payload = {
-      contents: contents,
-      systemInstruction: {
-        parts: [{ text: CHATBOT_SYSTEM_INSTRUCTION }]
-      }
-    };
-
-    const response = await fetch(endpoint, {
+    const response = await fetch("/api/chatbot", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        userText: chatHistory[chatHistory.length - 1]?.parts?.[0]?.text || "",
+        chatHistory: recentHistory
+      })
     });
 
     if (!response.ok) {
-      return new Response(JSON.stringify({ error: `Gemini API HTTP status: ${response.status}` }), {
-        status: response.status,
-        headers: { "Content-Type": "application/json" }
-      });
+      throw new Error(`HTTP Error status: ${response.status}`);
     }
 
     const data = await response.json();
-    const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const replyText = data.reply;
 
     if (!replyText) {
-      return new Response(JSON.stringify({ error: "Empty response from Gemini API" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" }
-      });
+      throw new Error("Respon kosong dari Chatbot API");
     }
 
-    return new Response(JSON.stringify({ reply: replyText.trim() }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
+    return replyText.trim();
   }
-}
+});
