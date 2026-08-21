@@ -398,6 +398,18 @@ body {
   color: var(--primary-dark);
 }
 
+/* Kotak Info Proses Verifikasi Mitra (Form Registrasi Restoran) */
+.verification-note {
+  font-size: 0.82rem;
+  background-color: var(--primary-light);
+  padding: 9px 12px;
+  border-radius: 8px;
+  border-left: 3px solid var(--primary);
+  margin-top: 8px;
+  color: var(--primary-dark);
+  line-height: 1.5;
+}
+
 .food-footer {
   display: flex;
   justify-content: space-between;

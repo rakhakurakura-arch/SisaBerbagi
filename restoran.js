@@ -63,6 +63,7 @@ foodForm.addEventListener("submit", async (e) => {
   }
 
   const namaRestoran = document.getElementById("namaRestoran").value.trim();
+  const kontakRestoran = document.getElementById("kontakRestoran").value.trim();
   const namaMakanan = document.getElementById("namaMakanan").value.trim();
   const jumlahPorsi = parseInt(document.getElementById("jumlahPorsi").value, 10);
   const waktuBatas = document.getElementById("waktuBatas").value;
@@ -85,6 +86,7 @@ foodForm.addEventListener("submit", async (e) => {
   try {
     await addDoc(collection(db, "food_listings"), {
       namaRestoran,
+      kontakRestoran,
       namaMakanan,
       jumlahPorsi,
       waktuBatas,
@@ -227,7 +229,7 @@ onSnapshot(q, (snapshot) => {
       <div class="food-item-header">
         <div>
           <div class="food-name">${escapeHtml(data.namaMakanan)}</div>
-          <small style="color: #68776C;">${escapeHtml(data.namaRestoran)}</small>
+          <small style="color: #68776C;">${escapeHtml(data.namaRestoran)}${data.kontakRestoran ? ` · WA: ${escapeHtml(data.kontakRestoran)}` : ''}</small>
         </div>
         <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px; justify-content:flex-end;">
           <span class="urgency-badge urgency-${data.skorUrgensi}">
